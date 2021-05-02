@@ -1,8 +1,13 @@
-source "http://rubygems.org"
+# frozen_string_literal: true
 
-group :development do
-  gem "rspec", "~> 2.1.0"
-  gem "bundler", "~> 1.0.0"
-  gem "jeweler", "~> 1.5.1"
-  gem "rcov", ">= 0"
+source 'http://rubygems.org'
+
+group :development, :test do
+  gem 'devpack', '~> 0.3.2'
+  gem 'rspec', '~> 3.10'
+  gem 'rspec-file_fixtures', '~> 0.1.3'
+  gem 'rspec-its', '~> 1.3'
+  gem 'rubocop', '~> 1.13'
+  gem 'rubocop-rspec', '~> 2.2'
+  gem 'strong_versions', '~> 0.4.5'
 end

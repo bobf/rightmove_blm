@@ -1,0 +1,6 @@
+AllCops:
+  NewCops: enable
+
+Metrics/BlockLength:
+  Exclude:
+  - 'spec/blm_spec.rb'
