@@ -28,10 +28,10 @@ module RightmoveBLM
       @header ||= contents(:header).each_line.map do |line|
         next nil if line.empty?
 
-        key, _, value = line.partition(' : ')
+        key, _, value = line.partition(':')
         next nil if value.nil?
 
-        [key.downcase.to_sym, value.tr("'", '').strip]
+        [key.strip.downcase.to_sym, value.tr("'", '').strip]
       end.compact.to_h
     end
 
