@@ -1,5 +1,5 @@
 #HEADER#
-VERSION : 3
+VERSION: 3
 EOF : '|'
 EOR : '~'
 
