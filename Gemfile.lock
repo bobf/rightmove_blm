@@ -3,7 +3,7 @@ GEM
   specs:
     ast (2.4.2)
     concurrent-ruby (1.1.8)
-    devpack (0.3.2)
+    devpack (0.3.3)
     diff-lcs (1.4.4)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -65,4 +65,4 @@ DEPENDENCIES
   strong_versions (~> 0.4.5)
 
 BUNDLED WITH
-   2.2.16
+   2.3.7
