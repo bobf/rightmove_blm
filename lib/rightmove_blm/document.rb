@@ -5,7 +5,7 @@ module RightmoveBLM
   class Document
     def self.from_array_of_hashes(array)
       date = Time.now.utc.strftime('%d-%b-%Y %H:%M').upcase
-      header = { version: '3', eof: '^', eor: '~', "property count": array.size.to_s, "generated date": date }
+      header = { version: '3', eof: '^', eor: '~', 'property count': array.size.to_s, 'generated date': date }
       new(header: header, definition: array.first.keys.map(&:to_sym), data: array)
     end
 

@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary
   spec.description = 'Parse and generate Rightmove BLM files'
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -19,10 +19,6 @@ Gem::Specification.new do |spec|
   spec.homepage = 'http://github.com/robertmay/blm'
   spec.licenses = ['MIT']
   spec.require_paths = ['lib']
-  spec.rubygems_version = '1.3.7'
   spec.summary = 'A parser for the Rightmove .blm format'
-  spec.test_files = [
-    'spec/blm_spec.rb',
-    'spec/spec_helper.rb'
-  ]
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end
