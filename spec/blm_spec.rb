@@ -7,7 +7,7 @@ RSpec.describe RightmoveBLM do
 
     it 'should parse settings from the header' do
       expect(blm.header).to be_a(Hash)
-      expect(blm.header[:version]).to  eq("3")
+      expect(blm.header[:version]).to  eq('3')
       expect(blm.header[:eof]).to_not be_nil
       expect(blm.header[:eor]).to_not be_nil
     end
