@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary
   spec.description = 'Parse and generate Rightmove BLM files'
-  spec.required_ruby_version = '~> 3.1.3'
+  spec.required_ruby_version = '>= 2.5'
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
