@@ -5,7 +5,7 @@ require_relative 'lib/rightmove_blm/version'
 Gem::Specification.new do |spec|
   spec.name = 'rightmove_blm'
   spec.version = RightmoveBLM::VERSION
-  spec.authors = ['Robert Farrell']
+  spec.authors = ['Bob Farrell']
   spec.email = 'git@bob.frl'
 
   spec.summary
