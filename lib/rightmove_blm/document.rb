@@ -13,7 +13,15 @@ module RightmoveBLM
       @source = source
       @header = header
       @definition = definition
-      @data = data&.map { |row| Row.new(row) }
+      initialize_with_data(data) unless data.nil?
+    end
+
+    def inspect
+      %(<##{self.class.name} version=#{version} rows=#{rows.size} valid=#{valid?} errors=#{errors.size}>)
+    end
+
+    def to_s
+      inspect
     end
 
     def to_blm
@@ -43,27 +51,49 @@ module RightmoveBLM
       end.compact
     end
 
-    def data
-      @data ||= contents.split(header[:eor]).map do |line|
-        row(line)
-      end
+    def rows
+      data
+    end
+
+    def errors
+      @errors ||= data.reject(&:valid?).flat_map(&:errors)
+    end
+
+    def valid?
+      errors.empty?
+    end
+
+    def version
+      header[:version]
+    end
+
+    def international?
+      %w[H1 3I].include?(version)
     end
 
     private
 
+    def initialize_with_data(data)
+      @data = data.each_with_index.map { |hash, index| Row.from_attributes(hash, index: index) }
+    end
+
+    def data
+      @data ||= contents.split(header[:eor]).each_with_index.map do |line, index|
+        Row.new(index: index, data: line, separator: header[:eof], definition: definition)
+      end
+    end
+
     def contents(section = :data)
       marker = "##{section.to_s.upcase}#"
-      start = @source.index(marker) + marker.size
-      finish = @source.index('#', start) - 1
+      start = verify(:start, @source.index(marker)) + marker.size
+      finish = verify(:end, @source.index('#', start)) - 1
       @source[start..finish].strip
     end
 
-    def row(line)
-      entry = {}
-      line.split(header[:eof]).each_with_index do |field, index|
-        entry[definition[index].to_sym] = field.strip
-      end
-      Row.new(entry)
+    def verify(type, val)
+      return val unless val.nil?
+
+      raise ParserError, "Unable to parse document: could not detect #{type} marker."
     end
 
     def generated_date

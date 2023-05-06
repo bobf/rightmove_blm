@@ -1,6 +1,9 @@
+require:
+  - rubocop-rspec
+
 AllCops:
   NewCops: enable
 
 Metrics/BlockLength:
   Exclude:
-  - 'spec/blm_spec.rb'
+  - 'spec/**/*_spec.rb'

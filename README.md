@@ -10,6 +10,8 @@ This library is not affiliated with or endorsed by _Rightmove Plc_ in any way.
 
 ### Loading a BLM file
 
+#### RightmoveBLM::Document
+
 Load a BLM file by passing the `source` parameter to `RightmoveBLM::Document.new`:
 
 ```ruby
@@ -20,16 +22,31 @@ The returned `RightmoveBLM::Document` instance implements:
 
 * `#header` - the header containing information about the document's structure.
 * `#definition` - the field list contained in the document.
-* `#data` - an array of `RightmoveBLM::Row` objects (use dot notation to access fields, e.g. `row.foo` to access the "foo" field).
+* `#rows` - an array of `RightmoveBLM::Row` objects.
+* `#valid?` - `true` if no rows have errors, `false` if any rows have errors.
+* `#errors` - all error messages for all invalid rows.
+* `#version` - the version of the document format as a string (e.g. `'3'`).
+* `#international?` - `true` if document meets the [Rightmove International](https://www.rightmove.co.uk/ps/pdf/guides/RightmoveDatafeedFormatV3iOVS_1.6.pdf) specification, `false` otherwise.
 
-`RightmoveBLM::Row` also implements `#to_h` which provides a _Hash_ of the row data.
+#### RightmoveBLM::Row
+
+`RightmoveBLM::Row` implements:
+
+* `#valid?` - `true` if no errors were encountered, false otherwise.
+* `#errors` - an array of error strings (empty if no errors present).
+* `#to_h` (or `#attributes`) - a hash of row attributes (`nil` if errors encountered).
+* `#method_missing` - allows accessing row attributes by dot notation (e.g. `row.address_1`).
 
 #### Example
 
 ```ruby
-blm.data.each do |row|
+blm.data.select(&:valid?).each do |row|
   puts row.address_1
   puts row.to_h
+end
+
+blm.data.reject(&:valid?).each do |row|
+  puts "Errors: #{row.errors.join(', ')}"
 end
 ```
 
