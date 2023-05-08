@@ -49,7 +49,7 @@ module RightmoveBLM
     attr_reader :data, :separator, :definition
 
     def field_size_mismatch_message
-      "Field size mismatch in row #{index}. Expected: #{definition.size} fields, found: #{fields.size}"
+      "Field size mismatch in row #{index + 1}. Expected: #{definition.size} fields, found: #{fields.size}"
     end
 
     def fields
