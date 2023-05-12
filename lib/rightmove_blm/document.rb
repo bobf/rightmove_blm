@@ -86,7 +86,7 @@ module RightmoveBLM
     def contents(section = :data)
       marker = "##{section.to_s.upcase}#"
       start = verify(:start, @source.index(marker)) + marker.size
-      finish = verify(:end, @source.index('#', start)) - 1
+      finish = verify(:end, @source.index('#END#', start)) - 1
       @source[start..finish].strip
     end
 
