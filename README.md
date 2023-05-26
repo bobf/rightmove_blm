@@ -18,6 +18,14 @@ Load a BLM file by passing the `source` parameter to `RightmoveBLM::Document.new
 blm = RightmoveBLM::Document.new(source: File.read('example_data.blm'))
 ```
 
+`RightmoveBLM::Document.new` also receives an optional argument `name` which is recommended for all documents to assist in tracking errors when processing many documents, e.g.:
+
+```ruby
+blm = RightmoveBLM::Document.new(source: File.read('example_data.blm'), name: 'example_data.blm')
+```
+
+This name will be included in all parser error messages.
+
 The returned `RightmoveBLM::Document` instance implements:
 
 * `#header` - the header containing information about the document's structure.

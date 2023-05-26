@@ -9,15 +9,22 @@ module RightmoveBLM
       new(header: header, definition: array.first.keys.map(&:to_sym), data: array)
     end
 
-    def initialize(source: nil, header: nil, definition: nil, data: nil)
-      @source = source
+    def initialize(source: nil, header: nil, definition: nil, data: nil, name: nil)
+      @source = source || data
       @header = header
       @definition = definition
+      @name = name
       initialize_with_data(data) unless data.nil?
     end
 
-    def inspect
-      %(<##{self.class.name} version=#{version} rows=#{rows.size} valid=#{valid?} errors=#{errors.size}>)
+    def inspect(safe: false, error: nil)
+      name = @name.nil? ? nil : %( document="#{@name}")
+      error_string = error.nil? ? nil : %( error="#{error}")
+      basic = %(<##{self.class.name}#{name}#{error_string}>)
+      return basic if safe
+
+      "<##{self.class.name}#{name}#{error_string} version=#{version} " \
+        "rows=#{rows.size} valid=#{valid?} errors=#{errors.size}>"
     end
 
     def to_s
@@ -39,7 +46,7 @@ module RightmoveBLM
         key, _, value = line.partition(':')
         next nil if value.nil?
 
-        [key.strip.downcase.to_sym, value.tr("'", '').strip]
+        [normalized_key(key), value.tr("'", '').strip]
       end.compact.to_h
     end
 
@@ -90,10 +97,16 @@ module RightmoveBLM
       @source[start..finish].strip
     end
 
+    def normalized_key(key)
+      key.strip.downcase.to_sym
+    rescue ArgumentError => e
+      raise_parser_error "Unable to parse document. Error found in header for key `#{key}`", e
+    end
+
     def verify(type, val)
       return val unless val.nil?
 
-      raise ParserError, "Unable to parse document: could not detect #{type} marker."
+      raise_parser_error "Unable to parse document: could not detect #{type} marker."
     end
 
     def generated_date
@@ -111,6 +124,10 @@ module RightmoveBLM
 
     def data_string
       ['#DATA#', *data.map { |row| "#{row.attributes.values.join('|')}~" }, '#END#']
+    end
+
+    def raise_parser_error(message, cause = nil)
+      raise ParserError, "#{inspect(safe: true)}: #{message} #{cause}"
     end
   end
 end
