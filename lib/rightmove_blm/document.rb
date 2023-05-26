@@ -2,7 +2,7 @@
 
 module RightmoveBLM
   # A BLM document including its header, definition, and data content.
-  class Document
+  class Document # rubocop:disable Metrics/ClassLength
     def self.from_array_of_hashes(array)
       date = Time.now.utc.strftime('%d-%b-%Y %H:%M').upcase
       header = { version: '3', eof: '^', eor: '~', 'property count': array.size.to_s, 'generated date': date }
@@ -95,6 +95,8 @@ module RightmoveBLM
       start = verify(:start, @source.index(marker)) + marker.size
       finish = verify(:end, @source.index('#END#', start)) - 1
       @source[start..finish].strip
+    rescue Encoding::CompatibilityError => e
+      raise_parser_error 'Unable to parse document due to encoding error.', e
     end
 
     def normalized_key(key)
