@@ -3,6 +3,8 @@
 module RightmoveBLM
   # A BLM document including its header, definition, and data content.
   class Document # rubocop:disable Metrics/ClassLength
+    BLM_4_FILE_KEYWORDS = %w[HEADER VERSION EOF EOR DEFINITION DATA END].freeze
+
     def self.from_array_of_hashes(array)
       date = Time.now.utc.strftime('%d-%b-%Y %H:%M').upcase
       header = { version: '3', eof: '^', eor: '~', 'property count': array.size.to_s, 'generated date': date }
@@ -15,6 +17,7 @@ module RightmoveBLM
       @definition = definition
       @name = name
       initialize_with_data(data) unless data.nil?
+      verify_source_file_structure(source) unless source.nil?
     end
 
     def inspect(safe: false, error: nil)
@@ -92,8 +95,8 @@ module RightmoveBLM
 
     def contents(section = :data)
       marker = "##{section.to_s.upcase}#"
-      start = verify(:start, @source.index(marker)) + marker.size
-      finish = verify(:end, @source.index('#END#', start)) - 1
+      start = verify_marker_presence(:start, @source.index(marker)) + marker.size
+      finish = verify_marker_presence(:end, @source.index('#END#', start)) - 1
       @source[start..finish].strip
     rescue Encoding::CompatibilityError => e
       raise_parser_error 'Unable to parse document due to encoding error.', e
@@ -105,10 +108,20 @@ module RightmoveBLM
       raise_parser_error "Unable to parse document. Error found in header for key `#{key}`", e
     end
 
-    def verify(type, val)
+    # INFO : for reverse compatibility. can remove this method and it's calls within this update.
+    # verify_file_structure should cover all cases of this method calls
+    def verify_marker_presence(type, val)
       return val unless val.nil?
 
       raise_parser_error "Unable to parse document: could not detect #{type} marker."
+    end
+
+    def verify_source_file_structure(source)
+      BLM_4_FILE_KEYWORDS.each do |keyword|
+        next if source.index(keyword)
+
+        raise_parser_error "Unable to process document with this structure: could not detect #{keyword} marker."
+      end
     end
 
     def generated_date
