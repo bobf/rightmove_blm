@@ -38,13 +38,15 @@ RSpec.describe RightmoveBLM do
       end
     end
 
-    describe 'with invalid file structure' do
-      let(:blm_data) { fixture('blm_with_wrong_structure.blm') }
+    describe '#initialize' do
+      context 'with invalid file structure' do # rubocop:disable RSpec/NestedGroups
+        let(:blm_data) { fixture('blm_with_wrong_structure.blm') }
 
-      describe '#initialize' do
-        err_msg = "<#RightmoveBLM::Document>: Unable to process document with this structure: could not detect HEADER marker. "
-
-        it { expect { blm }.to raise_error(RightmoveBLM::ParserError,  err_msg) }
+        it do
+          expect { blm }.to raise_error RightmoveBLM::ParserError,
+                                        '<#RightmoveBLM::Document>: Unable to process document ' \
+                                        'with this structure: could not detect HEADER marker. '
+        end
       end
     end
   end
