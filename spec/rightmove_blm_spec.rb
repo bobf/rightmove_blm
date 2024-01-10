@@ -45,7 +45,7 @@ RSpec.describe RightmoveBLM do
         it do
           expect { blm }.to raise_error RightmoveBLM::ParserError,
                                         '<#RightmoveBLM::Document>: Unable to process document ' \
-                                        'with this structure: could not detect HEADER marker. '
+                                        'with this structure: could not detect HEADER section. '
         end
       end
     end
