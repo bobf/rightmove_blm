@@ -3,7 +3,7 @@
 module RightmoveBLM
   # A BLM document including its header, definition, and data content.
   class Document # rubocop:disable Metrics/ClassLength
-    BLM_4_FILE_KEYWORDS = %w[HEADER VERSION EOF EOR DEFINITION DATA END].freeze
+    BLM_FILE_SECTIONS = %w[HEADER DEFINITION DATA END].freeze
 
     def self.from_array_of_hashes(array)
       date = Time.now.utc.strftime('%d-%b-%Y %H:%M').upcase
@@ -117,10 +117,10 @@ module RightmoveBLM
     end
 
     def verify_source_file_structure(source)
-      BLM_4_FILE_KEYWORDS.each do |keyword|
-        next if source.index(keyword)
+      BLM_FILE_SECTIONS.each do |section|
+        next if source.index(section)
 
-        raise_parser_error "Unable to process document with this structure: could not detect #{keyword} marker."
+        raise_parser_error "Unable to process document with this structure: could not detect #{section} section."
       end
     end
 
