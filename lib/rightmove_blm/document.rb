@@ -78,7 +78,7 @@ module RightmoveBLM
     end
 
     def international?
-      %w[H1 3I].include?(version)
+      %w[H1 3I 3i].include?(version)
     end
 
     private
