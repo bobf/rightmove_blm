@@ -5,9 +5,10 @@ module RightmoveBLM
   class Document # rubocop:disable Metrics/ClassLength
     BLM_FILE_SECTIONS = %w[HEADER DEFINITION DATA END].freeze
 
-    def self.from_array_of_hashes(array)
+    def self.from_array_of_hashes(array, international: false)
       date = Time.now.utc.strftime('%d-%b-%Y %H:%M').upcase
-      header = { version: '3', eof: '^', eor: '~', 'property count': array.size.to_s, 'generated date': date }
+      version = international ? '3i' : '3'
+      header = { version: version, eof: '^', eor: '~', 'property count': array.size.to_s, 'generated date': date }
       new(header: header, definition: array.first.keys.map(&:to_sym), data: array)
     end
 
