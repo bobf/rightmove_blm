@@ -68,3 +68,9 @@ The keys from the first _hash_ in the provided _array_ are used to provide the f
 document = RightmoveBLM::Document.from_array_of_hashes([{ field1: 'foo', field2: 'bar' }, { field1: 'baz', field2: 'foobar' }])
 File.write('my_data.blm', document.to_blm)
 ```
+
+To generate a Rightmove document with version 3i, provide `true` for the optional parameter `international`.
+
+```ruby
+document = RightmoveBLM::Document.from_array_of_hashes([{ field1: 'foo', field2: 'bar' }, { field1: 'baz', field2: 'foobar' }], international: true)
+```
