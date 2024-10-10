@@ -5,10 +5,10 @@ module RightmoveBLM
   class Document # rubocop:disable Metrics/ClassLength
     BLM_FILE_SECTIONS = %w[HEADER DEFINITION DATA END].freeze
 
-    def self.from_array_of_hashes(array, international: false)
+    def self.from_array_of_hashes(array, international: false, eor: '~', eof: '^')
       date = Time.now.utc.strftime('%d-%b-%Y %H:%M').upcase
       version = international ? '3i' : '3'
-      header = { version: version, eof: '^', eor: '~', 'property count': array.size.to_s, 'generated date': date }
+      header = { version: version, eof: eof, eor: eor, 'property count': array.size.to_s, 'generated date': date }
       new(header: header, definition: array.first.keys.map(&:to_sym), data: array)
     end
 
@@ -55,7 +55,7 @@ module RightmoveBLM
     end
 
     def definition
-      @definition ||= contents(:definition).split(header[:eor]).first.split(header[:eof]).map do |field|
+      @definition ||= contents(:definition).split(eor).first.split(eof).map do |field|
         next nil if field.empty?
 
         field.downcase.strip
@@ -130,20 +130,28 @@ module RightmoveBLM
     end
 
     def header_string
-      ['#HEADER#', "VERSION : #{header[:version]}", "EOF : '|'", "EOR : '~'",
+      ['#HEADER#', "VERSION : #{header[:version]}", "EOF : '#{eof}'", "EOR : '#{eor}'",
        "Property Count : #{data.size}", "Generated Date : #{generated_date}", '']
     end
 
     def definition_string
-      ['#DEFINITION#', "#{definition.join('|')}|~", '']
+      ['#DEFINITION#', "#{definition.join(eof)}#{eof}#{eor}", '']
     end
 
     def data_string
-      ['#DATA#', *data.map { |row| "#{row.attributes.values.join('|')}~" }, '#END#']
+      ['#DATA#', *data.map { |row| "#{row.attributes.values.join(eof)}#{eor}" }, '#END#']
     end
 
     def raise_parser_error(message, cause = nil)
       raise ParserError, "#{inspect(safe: true)}: #{message} #{cause}"
+    end
+
+    def eor
+      header[:eor]
+    end
+
+    def eof
+      header[:eof]
     end
   end
 end
